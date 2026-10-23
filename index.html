@@ -1,0 +1,189 @@
+<!-- huella:99720e6bd4b3b817bcded52e7408df0a2ff5a4a4 -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Cola de Reels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;1,600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --ground: #eceef2;   --surface: #ffffff;  --ink: #11151b;
+    --muted: #5d6673;    --line: #dbdfe7;     --accent: #d6455e;
+    --ok: #1f7a5c;       --ok-bg: #e2f1ea;    --wait: #9c6410;
+    --wait-bg: #f7ecd9;  --bad: #b42d2d;      --bad-bg: #f7e0df;
+    --idle: #667080;     --idle-bg: #e6e9ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0f1217;  --surface: #171b22;  --ink: #e7eaf0;
+      --muted: #949dab;   --line: #252b34;     --accent: #f3667e;
+      --ok: #59c79c;      --ok-bg: #16302a;    --wait: #e4a648;
+      --wait-bg: #322718; --bad: #f08080;      --bad-bg: #331d1e;
+      --idle: #8b95a3;    --idle-bg: #21262e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0f1217;  --surface: #171b22;  --ink: #e7eaf0;
+    --muted: #949dab;   --line: #252b34;     --accent: #f3667e;
+    --ok: #59c79c;      --ok-bg: #16302a;    --wait: #e4a648;
+    --wait-bg: #322718; --bad: #f08080;      --bad-bg: #331d1e;
+    --idle: #8b95a3;    --idle-bg: #21262e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.5;
+  }
+  img { max-width: 100%; }
+  .envoltorio { max-width: 620px; margin: 0 auto; padding: 0 16px; padding-block: 28px 56px; }
+  header { margin-bottom: 26px; }
+  .cuenta {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    letter-spacing: .09em; text-transform: uppercase; color: var(--accent);
+  }
+  h1 {
+    font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800;
+    font-size: clamp(30px, 8vw, 40px); line-height: 1.04; margin: 6px 0 14px;
+    letter-spacing: -.02em; text-wrap: balance;
+  }
+  .resumen { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .cifra {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 9px 13px; display: flex; align-items: baseline; gap: 7px;
+  }
+  .cifra b { font-family: "IBM Plex Mono", monospace; font-size: 19px; font-variant-numeric: tabular-nums; }
+  .cifra span { font-size: 12.5px; color: var(--muted); }
+  .meta { font-size: 13px; color: var(--muted); }
+  .meta strong { color: var(--ink); font-weight: 600; }
+  .dia { margin-top: 30px; }
+  .dia h2 {
+    font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 600; font-size: 15px;
+    letter-spacing: .01em; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    position: sticky; top: env(safe-area-inset-top, 0px); background: var(--ground);
+    padding-top: 8px; z-index: 2;
+  }
+  .relativo {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent); font-weight: 500;
+  }
+  .nota { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .reel {
+    display: flex; gap: 13px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 12px; margin-bottom: 10px;
+  }
+  .thumb {
+    width: 62px; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 8px;
+    flex: none; background: var(--idle-bg); max-width: 100%;
+  }
+  .thumb-vacio {
+    display: grid; place-items: center; font-size: 10px; color: var(--muted); text-align: center;
+  }
+  .datos { min-width: 0; flex: 1; }
+  .cabecera { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+  .hora {
+    font-family: "IBM Plex Mono", monospace; font-size: 13px; font-variant-numeric: tabular-nums;
+    color: var(--ink); font-weight: 500;
+  }
+  .hora-vacia { color: var(--muted); }
+  .franja { font-size: 11.5px; color: var(--muted); }
+  .reel.propio { border: 2px solid var(--accent); }
+  .propio .franja { color: var(--accent); font-weight: 600; }
+  .pill {
+    margin-left: auto; font-size: 10.5px; font-weight: 600; letter-spacing: .05em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  }
+  .ok { color: var(--ok); background: var(--ok-bg); }
+  .wait { color: var(--wait); background: var(--wait-bg); }
+  .bad { color: var(--bad); background: var(--bad-bg); }
+  .idle { color: var(--idle); background: var(--idle-bg); }
+  .reel h3 {
+    font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 600;
+    font-size: 16px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.01em;
+  }
+  .reel h3 em { font-style: italic; color: var(--accent); }
+  .copy { margin: 0 0 7px; font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+  .pie { margin: 0; font-size: 11.5px; color: var(--muted); }
+  .num { font-family: "IBM Plex Mono", monospace; color: var(--ink); }
+  .archivo { margin-top: 34px; }
+  .archivo summary {
+    font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 600; font-size: 15px;
+    cursor: pointer; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; display: flex; justify-content: space-between; align-items: baseline;
+    list-style: none;
+  }
+  .archivo summary::-webkit-details-marker { display: none; }
+  .archivo summary::before { content: "▸"; margin-right: 8px; color: var(--muted); }
+  .archivo[open] summary::before { content: "▾"; }
+  .archivo summary .relativo { margin-left: auto; }
+  footer { margin-top: 34px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="envoltorio">
+  <header>
+    <div class="cuenta">@gangagency.col</div>
+    <h1>Lo que va a salir</h1>
+    <div class="resumen">
+      <div class="cifra"><b>1</b><span>en cola</span></div>
+      <div class="cifra"><b>0</b><span>publicados</span></div>
+      <div class="cifra"><b>0</b><span>sin fecha</span></div>
+    </div>
+    <p class="meta">Próxima publicación: <strong>Viernes 23 de octubre a las 6:40 p.m.</strong><br>
+    Se publican solos desde la nube, con la computadora apagada.</p>
+  </header>
+    <section class="dia">
+      <h2>viernes 23 de octubre<span class="relativo" data-fecha="2026-10-23"></span></h2>
+      <article class="reel">
+        <img class="thumb" src="data:image/jpeg;base64,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" alt="">
+        <div class="datos">
+          <div class="cabecera"><span class="hora">6:40 p.m.</span><span class="franja">Tarde</span><span class="pill wait">En cola</span></div>
+          <h3>Tu problema no es vender <em>es conexión</em></h3>
+          <p class="copy">Si tu producto no se vende, quizás no es el producto: es cómo conectas con quien lo compra.<br>Mira cómo cambia todo cuando vendes desde lo que la persona vive.<br>¿Tú vendes características o conexión?<br>#ventas #emprendedores #marketingdigital #negocios</p>
+          <p class="pie"><span class="num">#01</span> reel de prueba · original 82</p>
+        </div>
+      </article>
+    </section>
+  <footer>
+    Franjas de publicación: 12:00–13:00 · 15:30–16:30 · 18:00–19:00 · 19:30–20:30 · 3 reels por día.<br>
+    Actualizado el viernes 23 de octubre, 5:35 p.m.. Se actualiza sola cada vez que la nube publica o reprograma un reel.
+  </footer>
+</div>
+<script>
+  (function () {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, "0"); };
+    var hoy = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+    d.setDate(d.getDate() + 1);
+    var manana = d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+    document.querySelectorAll("[data-fecha]").forEach(function (el) {
+      el.textContent = el.dataset.fecha === hoy ? "Hoy" : el.dataset.fecha === manana ? "Mañana" : "";
+    });
+  })();
+  // Se refresca sola: compara su huella con la publicada y, si hay una mas nueva, se recarga
+  // saltando la cache del celular (al abrirla, al volver a la pestana y cada 2 minutos).
+  (function () {
+    var c = document.firstChild, m = c && c.nodeType === 8 && /huella:(\w+)/.exec(c.data);
+    var mia = m ? m[1] : "";
+    function revisar() {
+      fetch(location.pathname + "?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.text() : ""; })
+        .then(function (t) {
+          var n = /huella:(\w+)/.exec(t);
+          if (!n || n[1] === mia) return;
+          try { if (sessionStorage.getItem("recargada") === n[1]) return; sessionStorage.setItem("recargada", n[1]); } catch (e) {}
+          location.replace(location.pathname + "?v=" + n[1]);
+        })
+        .catch(function () {});
+    }
+    revisar();
+    setInterval(function () { if (!document.hidden) revisar(); }, 120000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) revisar(); });
+  })();
+</script>
+</body>
+</html>
